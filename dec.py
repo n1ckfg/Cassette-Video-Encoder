@@ -2,55 +2,49 @@
 
 class VC(object):
 
-	def __init__(self, config):
-		const defConfig =
-		{
-			buffersize: 512,
-			clearInterval: 50,
-			overScan: 0.82,
-			hOffset: 0.06525,
-			pulseLength: (0.2 / 1000),
-			lineWidth: 2.5,
-			brightness: 1,
-			saturation: 1,
-			blend: True,
-			hFreq: 225.0,
-			vFreq: 3
+	def __init__(self):
+		self.config = {
+			"buffersize": 512,
+			"clearInterval": 50,
+			"overScan": 0.82,
+			"hOffset": 0.06525,
+			"pulseLength": (0.2 / 1000),
+			"lineWidth": 2.5,
+			"brightness": 1,
+			"saturation": 1,
+			"blend": True,
+			"hFreq": 225.0,
+			"vFreq": 3
 		}
 
-		config = Object.assign(defConfig, config)
+		self.buffersize = self.config["buffersize"]
 
-		self.buffersize = config.buffersize
+		self.sig = {
+			"LMin": 0.0,
+			"LMax": 1.0,
 
-		self.sig =
-		{
-			LMin: 0.0,
-			LMax: 1.0,
-
-			CMin: -1.0,
-			CMax: 1.0,
+			"CMin": -1.0,
+			"CMax": 1.0,
 		}
 
 		self.hPhase = 0
 		self.vPhase = 0
 
-		self.pulse =
-		{
-			time: 0,
-			timeout: 0,
-			luma: 0,
-			lumaPrev: 0,
-			chroma: 0,
-			chromaPrev: 0,
-			changed: False,
-			ready: False
+		self.pulse = {
+			"time": 0,
+			"timeout": 0,
+			"luma": 0,
+			"lumaPrev": 0,
+			"chroma": 0,
+			"chromaPrev": 0,
+			"changed": False,
+			"ready": False
 		}
 
-		self.timing =
-		{
-			time: 0,
-			lastV: 0,
-			lastH: 0,
+		self.timing = {
+			"time": 0,
+			"lastV": 0,
+			"lastH": 0,
 		}
 
 		self.field = 0
@@ -60,20 +54,19 @@ class VC(object):
 		self.chromaDelayIndex = 0
 
 		self.lines = []
-		self.currLine =
-		{
-			x1: 0,
-			y: 0,
-			maxPhase: 0,
-			colors: []
+		self.currLine = {
+			"x1": 0,
+			"y": 0,
+			"maxPhase": 0,
+			"colors": []
 		}
 		self.lastClear = 0
-		self.clearInterval = config.clearInterval
+		self.clearInterval = self.config["clearInterval"]
 
-		self.overScan = config.overScan
-		self.hOffset = config.hOffset
+		self.overScan = self.config["overScan"]
+		self.hOffset = self.config["hOffset"]
 
-		self.pulseLength = config.pulseLength
+		self.pulseLength = self.config["pulseLength"]
 
 		self.canvas = config.canvas
 		self.ctx = self.canvas.getContext("2d")
@@ -81,10 +74,10 @@ class VC(object):
 		self.width = self.canvas.width
 		self.height = self.canvas.height
 
-		self.lineWidth = config.lineWidth
-		self.blend = config.blend
-		self.brightness = config.brightness
-		self.saturation = config.saturation
+		self.lineWidth = self.config["lineWidth"]
+		self.blend = self.config["blend"]
+		self.brightness = self.config["brightness"]
+		self.saturation = self.config["saturation"]
 
 		requestAnimationFrame(() => self.draw())
 
@@ -94,8 +87,8 @@ class VC(object):
 		self.audioInput = None
 		self.decoder = None
 
-		self.hFreqTarget = 1.0 / config.hFreq * self.sampleRate
-		self.vFreqTarget = 1.0 / config.vFreq * self.sampleRate
+		self.hFreqTarget = 1.0 / self.config["hFreq"] * self.sampleRate
+		self.vFreqTarget = 1.0 / self.config["vFreq"] * self.sampleRate
 		self.hFreq = self.hFreqTarget
 		self.vFreq = self.vFreqTarget
 
@@ -189,12 +182,12 @@ class VC(object):
 				[r, g, b] = self.YCbCrToRGB(luma, chroma, chromaLast)
 
 			if (self.currLine.colors.length < 1024):
-				self.currLine.colors.push(
+				self.currLine.colors.append(
 					{
-						phase: self.hPhase,
-						r: Math.max(Math.min(Math.round(r), 255), 0),
-						g: Math.max(Math.min(Math.round(g), 255), 0),
-						b: Math.max(Math.min(Math.round(b), 255), 0)
+						"phase": self.hPhase,
+						"r": Math.max(Math.min(Math.round(r), 255), 0),
+						"g": Math.max(Math.min(Math.round(g), 255), 0),
+						"b": Math.max(Math.min(Math.round(b), 255), 0)
 					}
 				)
 
@@ -302,7 +295,7 @@ class VC(object):
 
 			if (blank == True):
 				if ((self.lines.length < 1024) and (self.currLine.colors.length > 5) and (self.currLine.maxPhase > 0)):
-					self.lines.push(self.currLine)
+					self.lines.append(self.currLine)
 
 				self.currLine =
 				{
